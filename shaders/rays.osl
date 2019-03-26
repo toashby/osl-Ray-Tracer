@@ -1,0 +1,56 @@
+struct sphere{
+    point pos;
+    float radius;
+};
+
+shader rays(
+    color Shading = 1,
+    vector pp = P,
+    vector c = 0,
+    int xx = 0,
+    output color Color = 0)
+{ 
+    int qHit(point p, vector d, sphere s){ //query hit
+        vector m = p - s.pos;
+        float b = dot(m, d);
+        float c = dot(m, m) - (s.radius * s.radius);
+        if(c > 0.0 && b > 0.0){ //pointing away
+            return 0;
+        }
+        float discr = b*b - c;
+        if(discr < 0.0){ //miss
+            return 0;
+        }
+        return 1; //ray intersects
+    }
+    //define some spheres
+    sphere s1;
+    s1.pos = point(2,0,0);
+    s1.radius = 0.5;
+
+    sphere s2;
+    s2.pos = point(0,0,0);
+    s2.radius = 2;
+
+    point CamPos;
+    float L;
+    if (raytype("camera"))
+    {
+    getattribute("path:ray_length", L);
+    CamPos=L*I+P;
+    }
+
+    //Color = color(sin((Camera[0] + P[0])*5), sin((Camera[1] + P[1])*5), sin((Camera[2] + P[2])*5));
+    Color = color(0.8,0.8,0.8); //background colour
+
+    int wasHit = qHit(CamPos, -I, s2); //hit detection for sphere1
+    if(wasHit == 1){
+        Color = color(0.8, 0.2, 0.2);
+    }
+
+    wasHit = qHit(CamPos, -I, s1);
+    if(wasHit == 1){
+        Color = color(0.2, 0.8, 0.2);
+    }
+
+}

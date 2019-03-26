@@ -1,0 +1,190 @@
+OpenShadingLanguage 1.00
+# Compiled by oslc 1.7.5
+# options: -o /tmp/tmp7ywb0suo.oso -I/home/tom/Downloads/blender-2.78c-linux-glibc219-x86_64/2.78/scripts/addons/cycles/shader
+shader rays
+param	color	Shading	1 1 1		%read{2147483647,-1} %write{2147483647,-1}
+param	vector	pp	0 0 0		%read{2147483647,-1} %write{0,0} %initexpr
+param	vector	c	0 0 0		%read{2147483647,-1} %write{2147483647,-1}
+param	int	xx	0		%read{2147483647,-1} %write{2147483647,-1}
+oparam	color	Color	0 0 0		%read{2147483647,-1} %write{10,62}
+global	point	P	%read{0,9} %write{2147483647,-1}
+global	vector	I	%read{8,37} %write{2147483647,-1}
+local	vector	___333_m	%read{14,41} %write{13,39}
+local	float	___333_b	%read{21,53} %write{14,40}
+local	float	___333_c	%read{18,54} %write{17,43}
+local	float	___333_discr	%read{29,55} %write{28,54}
+local	point	s1.pos	%read{39,39} %write{1,1} %mystruct{s1} %mystructfield{0}
+local	float	s1.radius	%read{42,42} %write{2,2} %mystruct{s1} %mystructfield{1}
+local	point	s2.pos	%read{13,13} %write{3,3} %mystruct{s2} %mystructfield{0}
+local	float	s2.radius	%read{16,16} %write{4,4} %mystruct{s2} %mystructfield{1}
+local	point	CamPos	%read{13,39} %write{9,9}
+local	float	L	%read{8,8} %write{7,7}
+local	int	wasHit	%read{34,60} %write{25,59}
+const	point	$const1	2 0 0		%read{1,1} %write{2147483647,-1}
+const	float	$const2	0.5		%read{2,2} %write{2147483647,-1}
+const	point	$const3	0 0 0		%read{3,3} %write{2147483647,-1}
+const	float	$const5	2		%read{4,4} %write{2147483647,-1}
+temp	int	$tmp1	%read{6,6} %write{5,5}
+const	string	$const6	"camera"		%read{5,5} %write{2147483647,-1}
+temp	int	$tmp2	%read{2147483647,-1} %write{7,7}
+const	string	$const7	"path:ray_length"		%read{7,7} %write{2147483647,-1}
+temp	vector	$tmp3	%read{9,9} %write{8,8}
+const	color	$const8	0.80000001 0.80000001 0.80000001		%read{10,10} %write{2147483647,-1}
+temp	vector	$tmp4	%read{14,14} %write{11,11}
+const	string	$const9	"qHit"		%read{12,38} %write{2147483647,-1}
+temp	float	$tmp5	%read{17,17} %write{15,15}
+temp	float	$tmp6	%read{17,17} %write{16,16}
+const	float	$const10	0		%read{18,55} %write{2147483647,-1}
+temp	int	$tmp7	%read{19,19} %write{18,18}
+temp	int	$tmp8	%read{20,24} %write{19,23}
+const	int	$const11	0		%read{19,57} %write{2147483647,-1}
+temp	int	$tmp9	%read{22,22} %write{21,21}
+temp	int	$tmp10	%read{23,23} %write{22,22}
+temp	float	$tmp11	%read{28,28} %write{27,27}
+temp	int	$tmp12	%read{30,30} %write{29,29}
+const	int	$const12	1		%read{33,60} %write{2147483647,-1}
+temp	int	$tmp13	%read{35,35} %write{34,34}
+const	color	$const13	0.80000001 0.2 0.2		%read{36,36} %write{2147483647,-1}
+temp	vector	$tmp14	%read{40,40} %write{37,37}
+temp	float	$tmp15	%read{43,43} %write{41,41}
+temp	float	$tmp16	%read{43,43} %write{42,42}
+temp	int	$tmp17	%read{45,45} %write{44,44}
+temp	int	$tmp18	%read{46,50} %write{45,49}
+temp	int	$tmp19	%read{48,48} %write{47,47}
+temp	int	$tmp20	%read{49,49} %write{48,48}
+temp	float	$tmp21	%read{54,54} %write{53,53}
+temp	int	$tmp22	%read{56,56} %write{55,55}
+temp	int	$tmp23	%read{61,61} %write{60,60}
+const	color	$const14	0.2 0.80000001 0.2		%read{62,62} %write{2147483647,-1}
+code pp
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:8
+#     vector pp = P,
+	assign		pp P 	%filename{"/home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl"} %line{8} %argrw{"wr"}
+code ___main___
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:28
+#     s1.pos = point(2,0,0);
+	assign		s1.pos $const1 	%filename{"/home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl"} %line{28} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:29
+#     s1.radius = 0.5;
+	assign		s1.radius $const2 	%line{29} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:32
+#     s2.pos = point(0,0,0);
+	assign		s2.pos $const3 	%line{32} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:33
+#     s2.radius = 2;
+	assign		s2.radius $const5 	%line{33} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:39
+#     if (raytype("camera"))
+	raytype		$tmp1 $const6 	%line{39} %argrw{"wr"}
+	if		$tmp1 10 10 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:41
+#     getattribute("path:ray_length", L);
+	getattribute	$tmp2 $const7 L 	%line{41} %argrw{"wrw"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:42
+#     CamPos=L*I+P;
+	mul		$tmp3 L I 	%line{42} %argrw{"wrr"}
+	add		CamPos $tmp3 P 	%argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:50
+#     Color = color(0.8,0.8,0.8); //background colour
+	assign		Color $const8 	%line{50} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:52
+#     int wasHit = qHit(CamPos, -I, s2);
+	neg		$tmp4 I 	%line{52} %argrw{"wr"}
+	functioncall	$const9 34 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:14
+#         vector m = p - s.pos;
+	sub		___333_m CamPos s2.pos 	%line{14} %argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:15
+#         float b = dot(m, d);
+	dot		___333_b ___333_m $tmp4 	%line{15} %argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:16
+#         float c = dot(m, m) - (s.radius * s.radius);
+	dot		$tmp5 ___333_m ___333_m 	%line{16} %argrw{"wrr"}
+	mul		$tmp6 s2.radius s2.radius 	%argrw{"wrr"}
+	sub		___333_c $tmp5 $tmp6 	%argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:17
+#         if(c > 0.0 && b > 0.0){ //pointing away
+	gt		$tmp7 ___333_c $const10 	%line{17} %argrw{"wrr"}
+	neq		$tmp8 $tmp7 $const11 	%argrw{"wrr"}
+	if		$tmp8 24 24 	%argrw{"r"}
+	gt		$tmp9 ___333_b $const10 	%argrw{"wrr"}
+	neq		$tmp10 $tmp9 $const11 	%argrw{"wrr"}
+	assign		$tmp8 $tmp10 	%argrw{"wr"}
+	if		$tmp8 27 27 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:18
+#             return 0;
+	assign		wasHit $const11 	%line{18} %argrw{"wr"}
+	return
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:20
+#         float discr = b*b - c;
+	mul		$tmp11 ___333_b ___333_b 	%line{20} %argrw{"wrr"}
+	sub		___333_discr $tmp11 ___333_c 	%argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:21
+#         if(discr < 0.0){ //miss
+	lt		$tmp12 ___333_discr $const10 	%line{21} %argrw{"wrr"}
+	if		$tmp12 33 33 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:22
+#             return 0;
+	assign		wasHit $const11 	%line{22} %argrw{"wr"}
+	return
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:24
+#         return 1; //ray intersects
+	assign		wasHit $const12 	%line{24} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:53
+#     if(wasHit == 1){
+	eq		$tmp13 wasHit $const12 	%line{53} %argrw{"wrr"}
+	if		$tmp13 37 37 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:54
+#         Color = color(0.8, 0.2, 0.2);
+	assign		Color $const13 	%line{54} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:57
+#     wasHit = qHit(CamPos, -I, s1);
+	neg		$tmp14 I 	%line{57} %argrw{"wr"}
+	functioncall	$const9 60 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:14
+#         vector m = p - s.pos;
+	sub		___333_m CamPos s1.pos 	%line{14} %argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:15
+#         float b = dot(m, d);
+	dot		___333_b ___333_m $tmp14 	%line{15} %argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:16
+#         float c = dot(m, m) - (s.radius * s.radius);
+	dot		$tmp15 ___333_m ___333_m 	%line{16} %argrw{"wrr"}
+	mul		$tmp16 s1.radius s1.radius 	%argrw{"wrr"}
+	sub		___333_c $tmp15 $tmp16 	%argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:17
+#         if(c > 0.0 && b > 0.0){ //pointing away
+	gt		$tmp17 ___333_c $const10 	%line{17} %argrw{"wrr"}
+	neq		$tmp18 $tmp17 $const11 	%argrw{"wrr"}
+	if		$tmp18 50 50 	%argrw{"r"}
+	gt		$tmp19 ___333_b $const10 	%argrw{"wrr"}
+	neq		$tmp20 $tmp19 $const11 	%argrw{"wrr"}
+	assign		$tmp18 $tmp20 	%argrw{"wr"}
+	if		$tmp18 53 53 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:18
+#             return 0;
+	assign		wasHit $const11 	%line{18} %argrw{"wr"}
+	return
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:20
+#         float discr = b*b - c;
+	mul		$tmp21 ___333_b ___333_b 	%line{20} %argrw{"wrr"}
+	sub		___333_discr $tmp21 ___333_c 	%argrw{"wrr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:21
+#         if(discr < 0.0){ //miss
+	lt		$tmp22 ___333_discr $const10 	%line{21} %argrw{"wrr"}
+	if		$tmp22 59 59 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:22
+#             return 0;
+	assign		wasHit $const11 	%line{22} %argrw{"wr"}
+	return
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:24
+#         return 1; //ray intersects
+	assign		wasHit $const12 	%line{24} %argrw{"wr"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:58
+#     if(wasHit == 1){
+	eq		$tmp23 wasHit $const12 	%line{58} %argrw{"wrr"}
+	if		$tmp23 63 63 	%argrw{"r"}
+# /home/tom/Documents/blender/../../Workspace/OSLshaders/osl-Ray-Tracer/shaders/rays.osl:59
+#         Color = color(0.2, 0.8, 0.2);
+	assign		Color $const14 	%line{59} %argrw{"wr"}
+	end
