@@ -1,51 +1,30 @@
-struct sphere{
-    point pos;
-    float radius;
-    color col;
-};
+struct sphere{point pos; float radius; color col;};
 
 shader rays(
-    color Shading = 1,
-    vector pp = P,
-    vector c = 0,
-    int xx = 0,
     output color Color = 0)
 { 
     float nearestT;
     vector hitP;
 
-    //get the camera position
-    point CamPos;
+    point CamPos;//get the camera position
     float L;
-    if (raytype("camera"))
-    {
-    getattribute("path:ray_length", L);
-    CamPos=L*I+P;
+    if (raytype("camera")){
+        getattribute("path:ray_length", L);
+        CamPos=L*I+P;
     }
 
-    color stripeMaterial(){ //test osl shader, need to get proper hit point
-        //if(P[2] < 0.5){
-        //vector hitP = vector(-I[0]*nearestT, -I[1]*nearestT, -I[2]*nearestT);
-        //printf("test %f", hitP[2]);
-        if(hitP[2] < 0.0){
-            return color(noise("perlin", P*10, 10), 0.0, noise("perlin", P*20, 10));
+    color stripeMaterial(point hp){ //test osl shader, need to get proper hit point
+        if(hp[2] < 0.5){
+            return color(noise("perlin", hp*10, 10), 0.0, noise("perlin", hp*20, 10));
+        }else{
+            return color(sin(hp[1] * 10));
         }
     }
 
+    sphere s1; s1.pos = point(2,0,0); s1.radius = 0.5; //define some spheres
+    sphere s2; s2.pos = point(0,0,0); s2.radius = 2;
 
-        //define some spheres
-    sphere s1;
-    s1.pos = point(2,0,0);
-    s1.radius = 0.5;
-    s1.col = color(0.1,0.5,0.1);
-
-
-    sphere s2;
-    s2.pos = point(0,0,0);
-    s2.radius = 2;
-    s2.col = stripeMaterial();//color(0.5,0.1,0.5);
-
-        sphere spheres[2];
+    sphere spheres[2];
     spheres[0] = s1;
     spheres[1] = s2;
 
@@ -61,18 +40,13 @@ shader rays(
             return 0;
         }
         float nearestT = -b - sqrt(discr);
-        hitP = p + nearestT * d;
-        //s.hitP = p + nearestT * d;   
+        hitP = p + nearestT * d; 
         return nearestT; //ray intersects
     }
 
-
-    //Color = color(sin((Camera[0] + P[0])*5), sin((Camera[1] + P[1])*5), sin((Camera[2] + P[2])*5));
     Color = color(0.8,0.8,0.8); //background colour
 
     float wasHit;
-    //int wasHit = qHit(CamPos, -I, s2); //hit detection for sphere1
-
     float tempHit = 999999999;
     int closestRec;
     for(int i = 0; i < 2; ++i){//find closest t here
@@ -80,9 +54,12 @@ shader rays(
         if(wasHit < tempHit && wasHit > 0){
             tempHit = wasHit;
             closestRec = i;
-            Color = spheres[i].col;
-            //printf("test %f", hitP[2]);
+
+            color matList[2]; //declare materials here
+            matList[0] = color(0.2,0.8,0.4);
+            matList[1] = stripeMaterial(hitP);
+
+            Color = matList[i];
         }
     }
-
 }
