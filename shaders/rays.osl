@@ -1,6 +1,7 @@
 struct sphere{
     point pos;
     float radius;
+    color col;
 };
 
 shader rays(
@@ -10,7 +11,45 @@ shader rays(
     int xx = 0,
     output color Color = 0)
 { 
-    int qHit(point p, vector d, sphere s){ //query hit
+    float nearestT;
+    vector hitP;
+
+    //get the camera position
+    point CamPos;
+    float L;
+    if (raytype("camera"))
+    {
+    getattribute("path:ray_length", L);
+    CamPos=L*I+P;
+    }
+
+    color stripeMaterial(){ //test osl shader, need to get proper hit point
+        //if(P[2] < 0.5){
+        //vector hitP = vector(-I[0]*nearestT, -I[1]*nearestT, -I[2]*nearestT);
+        //printf("test %f", hitP[2]);
+        if(hitP[2] < 0.0){
+            return color(noise("perlin", P*10, 10), 0.0, noise("perlin", P*20, 10));
+        }
+    }
+
+
+        //define some spheres
+    sphere s1;
+    s1.pos = point(2,0,0);
+    s1.radius = 0.5;
+    s1.col = color(0.1,0.5,0.1);
+
+
+    sphere s2;
+    s2.pos = point(0,0,0);
+    s2.radius = 2;
+    s2.col = stripeMaterial();//color(0.5,0.1,0.5);
+
+        sphere spheres[2];
+    spheres[0] = s1;
+    spheres[1] = s2;
+
+    float qHit(point p, vector d, sphere s){ //query hit function
         vector m = p - s.pos;
         float b = dot(m, d);
         float c = dot(m, m) - (s.radius * s.radius);
@@ -21,36 +60,29 @@ shader rays(
         if(discr < 0.0){ //miss
             return 0;
         }
-        return 1; //ray intersects
+        float nearestT = -b - sqrt(discr);
+        hitP = p + nearestT * d;
+        //s.hitP = p + nearestT * d;   
+        return nearestT; //ray intersects
     }
-    //define some spheres
-    sphere s1;
-    s1.pos = point(2,0,0);
-    s1.radius = 0.5;
 
-    sphere s2;
-    s2.pos = point(0,0,0);
-    s2.radius = 2;
-
-    point CamPos;
-    float L;
-    if (raytype("camera"))
-    {
-    getattribute("path:ray_length", L);
-    CamPos=L*I+P;
-    }
 
     //Color = color(sin((Camera[0] + P[0])*5), sin((Camera[1] + P[1])*5), sin((Camera[2] + P[2])*5));
     Color = color(0.8,0.8,0.8); //background colour
 
-    int wasHit = qHit(CamPos, -I, s2); //hit detection for sphere1
-    if(wasHit == 1){
-        Color = color(0.8, 0.2, 0.2);
-    }
+    float wasHit;
+    //int wasHit = qHit(CamPos, -I, s2); //hit detection for sphere1
 
-    wasHit = qHit(CamPos, -I, s1);
-    if(wasHit == 1){
-        Color = color(0.2, 0.8, 0.2);
+    float tempHit = 999999999;
+    int closestRec;
+    for(int i = 0; i < 2; ++i){//find closest t here
+        wasHit = qHit(CamPos, -I, spheres[i]);
+        if(wasHit < tempHit && wasHit > 0){
+            tempHit = wasHit;
+            closestRec = i;
+            Color = spheres[i].col;
+            //printf("test %f", hitP[2]);
+        }
     }
 
 }
